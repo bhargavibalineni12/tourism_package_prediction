@@ -15,14 +15,13 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r ./tourism_project/requirements.txt
+          pip install -r tourism_project/requirements.txt
 
       - name: Upload Dataset to Hugging Face Hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          python ./tourism_project/model_building/data_register.py
-
+          python tourism_project/model_building/data_register.py
   data-prep:
     needs: register-dataset
     runs-on: ubuntu-latest
@@ -32,13 +31,13 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r ./tourism_project/requirements.txt
+          pip install -r tourism_project/requirements.txt
 
       - name: Run Data Preparation
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          python ./tourism_project/model_building/data_preparation.py
+          python tourism_project/model_building/prep.py
 
   model-traning:
     needs: data-prep
@@ -49,7 +48,7 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r ./tourism_project/requirements.txt
+          pip install -r tourism_project/requirements.txt
 
       - name: Start MLflow Server
         run: |
@@ -60,7 +59,7 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          python ./tourism_project/model_building/train_model.py
+          python tourism_project/model_building/train.py
 
   deploy-hosting:
     runs-on: ubuntu-latest
@@ -71,10 +70,10 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r ./tourism_project/requirements.txt
+          pip install -r tourism_project/requirements.txt
 
       - name: Push files to Frontend Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          python ./tourism_project/hosting/deploy_space.py
+          python ./tourism_project/hosting/hosting.py
